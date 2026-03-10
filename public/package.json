@@ -1,6 +1,7 @@
 {
   "name": "pinggirx-billing",
   "version": "1.0.0",
+  "description": "Billing System PinggirX",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
