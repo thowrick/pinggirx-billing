@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    body { background-color: #1e0b3b; font-family: sans-serif; overflow-x: hidden; }
+    .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
+    .menu-card { transition: all 0.2s; cursor: pointer; }
+    .menu-card:active { transform: scale(0.9); }
+    .tab-active { color: white; border-bottom: 3px solid #a855f7; font-weight: bold; }
+    .profile-circle img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+  </style>
+</head>
+<body class="text-white min-h-screen">
+
+  <div id="login-page" class="flex flex-col items-center justify-center min-h-screen p-6">
+    <div class="w-full max-w-md p-8 rounded-[2.5rem] glass shadow-2xl text-center">
+      <img src="https://lh3.googleusercontent.com/u/0/d/15OP61Lg9jCeCFt9-57Cv6hBMoudq-sP0" class="h-24 w-auto mx-auto mb-4 drop-shadow-lg" onerror="this.src='https://ui-avatars.com/api/?name=Pinggir+X&background=a855f7&color=fff'">
+      
+      <h1 class="text-2xl font-bold tracking-wider">PinggirX.Net</h1>
+      <p class="text-purple-300 text-sm mb-8">Billing Management Node.js</p>
+      
+      <div class="space-y-4 text-left">
+        <div class="relative">
+          <input type="text" id="user" class="w-full px-4 py-3 rounded-xl bg-purple-900/30 border border-purple-500/30 outline-none focus:ring-2 focus:ring-purple-400 text-white" placeholder="Username">
+          <i class="fas fa-user absolute right-4 top-4 text-purple-400"></i>
+        </div>
+        <div class="relative">
+          <input type="password" id="pass" onkeydown="if(event.key==='Enter') prosesLogin()" class="w-full px-4 py-3 rounded-xl bg-purple-900/30 border border-purple-500/30 outline-none focus:ring-2 focus:ring-purple-400 text-white" placeholder="Password">
+          <button onclick="togglePass()" class="absolute right-4 top-3.5 text-purple-300"><i id="eye-icon" class="fas fa-eye"></i></button>
+        </div>
+        <button onclick="prosesLogin()" id="btnLogin" class="w-full py-4 bg-purple-600 hover:bg-purple-500 rounded-xl font-bold active:scale-95 transition-all shadow-lg">LOGIN</button>
+        <div id="msg" class="hidden text-center text-red-400 text-sm mt-2 p-2 bg-red-900/50 rounded-lg"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="home-tab" class="hidden pb-24">
+    <div class="p-6 bg-purple-900/40 rounded-b-[3rem] border-b border-purple-500/20 shadow-xl">
+      <div class="flex justify-between items-start mb-6">
+        <div>
+          <p id="current-date" class="text-xs text-purple-300 uppercase font-bold mb-1"></p>
+          <h2 class="text-3xl font-black tracking-tight">PinggirX.Net</h2>
+          <p class="text-purple-200 text-sm">Selamat datang, <span id="user-display" class="font-bold text-white">Admin</span>!</p>
+        </div>
+        <div class="w-14 h-14 rounded-full border-2 border-purple-400 p-0.5 profile-circle glass">
+           <img src="https://ui-avatars.com/api/?name=Admin&background=a855f7&color=fff" id="avatar-img">
+        </div>
+      </div>
+      
+      <div class="grid grid-cols-2 gap-3 text-center">
+        <div class="p-4 rounded-2xl bg-gradient-to-br from-purple-600 to-purple-700 shadow-lg border border-purple-500/50">
+          <p class="text-[10px] uppercase font-bold opacity-80 mb-1 text-white/70">Total Pelanggan</p>
+          <h3 id="dash-p" class="font-bold text-xl text-white">0</h3>
+        </div>
+        <div class="p-4 rounded-2xl bg-gradient-to-br from-indigo-600 to-indigo-700 shadow-lg border border-indigo-500/50">
+          <p class="text-[10px] uppercase font-bold opacity-80 mb-1 text-white/70">Pemasukan (Bulan Ini)</p>
+          <h3 id="dash-m" class="font-bold text-xl text-green-300">Rp 0</h3>
+        </div>
+      </div>
+    </div>
+    
+    <div class="p-6">
+      <h3 class="text-xs uppercase text-purple-300 font-bold mb-4 ml-1">Menu Utama</h3>
+      <div class="grid grid-cols-3 gap-6 text-center">
+        <div onclick="bukaMenuPelanggan()" class="menu-card space-y-2">
+          <div class="w-16 h-16 mx-auto bg-purple-800/50 rounded-2xl flex items-center justify-center border border-purple-500/30 shadow-inner"><i class="fas fa-users text-2xl text-purple-300"></i></div>
+          <p class="text-[11px] font-bold">Pelanggan</p>
+        </div>
+        <div onclick="alert('Menu Mikrotik Segera Hadir')" class="menu-card space-y-2">
+          <div class="w-16 h-16 mx-auto bg-purple-800/50 rounded-2xl flex items-center justify-center border border-purple-500/30 shadow-inner"><i class="fas fa-microchip text-2xl text-purple-300"></i></div>
+          <p class="text-[11px] font-bold">Mikrotik</p>
+        </div>
+        <div onclick="alert('Menu Pembukuan Segera Hadir')" class="menu-card space-y-2">
+          <div class="w-16 h-16 mx-auto bg-purple-800/50 rounded-2xl flex items-center justify-center border border-purple-500/30 shadow-inner"><i class="fas fa-book text-2xl text-purple-300"></i></div>
+          <p class="text-[11px] font-bold">Pembukuan</p>
+        </div>
+        <div onclick="alert('Menu Teknisi Segera Hadir')" class="menu-card space-y-2">
+          <div class="w-16 h-16 mx-auto bg-purple-800/50 rounded-2xl flex items-center justify-center border border-purple-500/30 shadow-inner"><i class="fas fa-tools text-2xl text-purple-300"></i></div>
+          <p class="text-[11px] font-bold">Teknisi</p>
+        </div>
+        <div onclick="alert('Menu Isolir Segera Hadir')" class="menu-card space-y-2">
+          <div class="w-16 h-16 mx-auto bg-red-900/40 rounded-2xl flex items-center justify-center border border-red-600/50 shadow-inner"><i class="fas fa-user-slash text-2xl text-red-400"></i></div>
+          <p class="text-[11px] font-bold text-red-300">Isolir</p>
+        </div>
+        <div onclick="alert('Menu Log Segera Hadir')" class="menu-card space-y-2">
+          <div class="w-16 h-16 mx-auto bg-purple-800/50 rounded-2xl flex items-center justify-center border border-purple-500/30 shadow-inner"><i class="fas fa-history text-2xl text-purple-300"></i></div>
+          <p class="text-[11px] font-bold">Log Act</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="modal-pelanggan" class="hidden fixed inset-0 bg-purple-950 z-[100] flex flex-col">
+    <div class="p-6 bg-purple-900 shadow-xl flex justify-between items-center">
+      <h2 class="text-xl font-bold">Data Pelanggan</h2>
+      <button onclick="tutupMenuPelanggan()" class="text-3xl">&times;</button>
+    </div>
+    <div class="p-4 flex-1 overflow-y-auto no-scrollbar">
+      <div id="list-pelanggan-container" class="space-y-3">
+        </div>
+    </div>
+  </div>
+
+  <nav id="bottom-nav" class="hidden fixed bottom-6 left-6 right-6 h-16 glass rounded-[2.2rem] flex items-center justify-around z-50 shadow-2xl border border-white/10">
+    <button onclick="changeTab('home')" class="nav-item flex flex-col items-center text-white">
+      <i class="fas fa-home text-xl"></i>
+      <span class="text-[10px] font-bold mt-1">Beranda</span>
+    </button>
+    <button onclick="alert('Menu Cari')" class="nav-item flex flex-col items-center text-purple-400">
+      <i class="fas fa-search text-xl"></i>
+      <span class="text-[10px] font-bold mt-1">Cari</span>
+    </button>
+    <button onclick="alert('Menu Setting')" class="nav-item flex flex-col items-center text-purple-400">
+      <i class="fas fa-cog text-xl"></i>
+      <span class="text-[10px] font-bold mt-1">Setting</span>
+    </button>
+  </nav>
+
+  <script>
+    // --- AUTHENTICATION ---
+    async function prosesLogin() {
+      const u = document.getElementById('user').value;
+      const p = document.getElementById('pass').value;
+      const btn = document.getElementById('btnLogin');
+      const msg = document.getElementById('msg');
+
+      if(!u || !p) return;
+
+      btn.innerText = "MENGHUBUNGKAN...";
+      btn.disabled = true;
+
+      try {
+        const response = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: u, password: p })
+        });
+        
+        const res = await response.json();
+
+        if(res.status === "success") {
+          document.getElementById('user-display').innerText = res.nama;
+          document.getElementById('avatar-img').src = `https://ui-avatars.com/api/?name=${res.nama}&background=a855f7&color=fff`;
+          document.getElementById('login-page').classList.add('hidden');
+          document.getElementById('home-tab').classList.remove('hidden');
+          document.getElementById('bottom-nav').classList.remove('hidden');
+          loadDashboard();
+        } else {
+          msg.innerText = res.message;
+          msg.classList.remove('hidden');
+          btn.innerText = "LOGIN";
+          btn.disabled = false;
+        }
+      } catch (err) {
+        msg.innerText = "Gagal terhubung ke server!";
+        msg.classList.remove('hidden');
+        btn.disabled = false;
+      }
+    }
+
+    // --- DATA FETCHING ---
+    async function loadDashboard() {
+        // Untuk sementara angka statis, nanti bisa buat endpoint /api/stats
+        document.getElementById('dash-p').innerText = "Update...";
+        try {
+            const response = await fetch('/api/pelanggan');
+            const data = await response.json();
+            document.getElementById('dash-p').innerText = data.length;
+        } catch (e) { console.error(e); }
+    }
+
+    async function bukaMenuPelanggan() {
+      document.getElementById('modal-pelanggan').classList.remove('hidden');
+      const container = document.getElementById('list-pelanggan-container');
+      container.innerHTML = '<p class="text-center p-10">Memuat data...</p>';
+
+      try {
+        const response = await fetch('/api/pelanggan');
+        const data = await response.json();
+        
+        let html = '';
+        data.forEach(p => {
+          html += `
+            <div class="p-4 glass rounded-2xl border border-white/10 shadow-md">
+              <div class="flex justify-between items-start">
+                <div>
+                  <p class="text-[10px] font-bold text-purple-400">${p.id}</p>
+                  <h4 class="font-bold text-lg">${p.nama}</h4>
+                  <p class="text-xs opacity-70">${p.alamat}</p>
+                  <div class="mt-2 flex gap-2">
+                    <span class="px-2 py-0.5 bg-purple-600 rounded text-[10px]">${p.paket}</span>
+                    <span class="px-2 py-0.5 bg-blue-600 rounded text-[10px]">${p.status}</span>
+                  </div>
+                </div>
+              </div>
+            </div>`;
+        });
+        container.innerHTML = html || '<p class="text-center opacity-50 p-10">Data kosong</p>';
+      } catch (err) {
+        container.innerHTML = '<p class="text-center text-red-400 p-10">Gagal mengambil data</p>';
+      }
+    }
+
+    // --- UI UTILS ---
+    function tutupMenuPelanggan() { document.getElementById('modal-pelanggan').classList.add('hidden'); }
+    
+    function togglePass() {
+      const p = document.getElementById('pass');
+      const i = document.getElementById('eye-icon');
+      p.type = p.type === 'password' ? 'text' : 'password';
+      i.classList.toggle('fa-eye'); i.classList.toggle('fa-eye-slash');
+    }
+
+    function changeTab(tab) {
+        // Navigasi tab bisa ditambahkan di sini
+    }
+
+    document.getElementById('current-date').innerText = new Date().toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'long'});
+  </script>
+</body>
+</html>
