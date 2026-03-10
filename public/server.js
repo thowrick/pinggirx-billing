@@ -28,12 +28,19 @@ db.connect((err) => {
 // --- API LOGIN ---
 app.post('/api/login', (req, res) => {
     const { username, password } = req.body;
+    // Pastikan nama kolom di bawah ini (username, password) sama persis dengan di Railway
     const query = "SELECT * FROM users WHERE username = ? AND password = ?";
     
     db.query(query, [username, password], (err, results) => {
         if (err) return res.status(500).json({ status: 'error', message: err.message });
         if (results.length > 0) {
-            res.json({ status: 'success', nama: results[0].nama_display, role: results[0].role });
+            // Pastikan menggunakan res.nama = results[0].nama_display 
+            // sesuai nama kolom yang kamu buat tadi
+            res.json({ 
+                status: 'success', 
+                nama: results[0].nama_display, 
+                role: results[0].role 
+            });
         } else {
             res.json({ status: 'error', message: 'Username/Password Salah!' });
         }
