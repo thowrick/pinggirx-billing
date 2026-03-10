@@ -17,18 +17,18 @@ const db = mysql.createConnection({
     user: process.env.MYSQLUSER,
     password: process.env.MYSQLPASSWORD,
     database: process.env.MYSQLDATABASE,
-    port: process.env.MYSQLPORT || 3306,
-    connectTimeout: 10000 // Menunggu 10 detik sebelum menyerah konek
+    port: process.env.MYSQLPORT || 3306
 });
 
+// Perbaikan cara cek koneksi agar tidak crash
 db.connect((err) => {
     if (err) {
-        console.error('CRITICAL: Database koneksi error: ' + err.message);
+        console.error('DATABASE GAGAL KONEK: ' + err.message);
+        // Jangan hentikan server, tapi log saja errornya
     } else {
-        console.log('SUCCESS: Terhubung ke Database MySQL Railway');
+        console.log('DATABASE BERHASIL TERHUBUNG!');
     }
 });
-
 // --- API LOGIN ---
 app.post('/api/login', (req, res) => {
     const { username, password } = req.body;
