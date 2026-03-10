@@ -1,48 +1,50 @@
 const express = require('express');
 const mysql = require('mysql2');
 const cors = require('cors');
+const path = require('path');
 require('dotenv').config();
 
 const app = express();
 app.use(express.json());
 app.use(cors());
-app.use(express.static('public')); // Melayani file index.html dari folder public
 
-// Koneksi Database (Railway otomatis menyediakan variable ini)
+// Melayani file statis dari folder 'public'
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Koneksi Database
 const db = mysql.createConnection({
-    host: process.env.MYSQLHOST || 'localhost',
-    user: process.env.MYSQLUSER || 'root',
-    password: process.env.MYSQLPASSWORD || '',
-    database: process.env.MYSQLDATABASE || 'railway',
-    port: process.env.MYSQLPORT || 3306
+    host: process.env.MYSQLHOST,
+    user: process.env.MYSQLUSER,
+    password: process.env.MYSQLPASSWORD,
+    database: process.env.MYSQLDATABASE,
+    port: process.env.MYSQLPORT || 3306,
+    connectTimeout: 10000 // Menunggu 10 detik sebelum menyerah konek
 });
 
 db.connect((err) => {
     if (err) {
-        console.error('Database koneksi error: ' + err.stack);
-        return;
+        console.error('CRITICAL: Database koneksi error: ' + err.message);
+    } else {
+        console.log('SUCCESS: Terhubung ke Database MySQL Railway');
     }
-    console.log('Terhubung ke Database MySQL Railway');
 });
 
 // --- API LOGIN ---
 app.post('/api/login', (req, res) => {
     const { username, password } = req.body;
-    // Pastikan nama kolom di bawah ini (username, password) sama persis dengan di Railway
     const query = "SELECT * FROM users WHERE username = ? AND password = ?";
     
     db.query(query, [username, password], (err, results) => {
-        if (err) return res.status(500).json({ status: 'error', message: err.message });
+        if (err) return res.status(500).json({ status: 'error', message: "Database Error" });
+        
         if (results.length > 0) {
-            // Pastikan menggunakan res.nama = results[0].nama_display 
-            // sesuai nama kolom yang kamu buat tadi
             res.json({ 
                 status: 'success', 
                 nama: results[0].nama_display, 
                 role: results[0].role 
             });
         } else {
-            res.json({ status: 'error', message: 'Username/Password Salah!' });
+            res.json({ status: 'error', message: 'Username atau Password salah!' });
         }
     });
 });
@@ -55,8 +57,8 @@ app.get('/api/pelanggan', (req, res) => {
     });
 });
 
-// Jalankan Server
+// Jalankan Server (Settingan Port untuk Railway)
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server jalan di port ${PORT}`);
+app.listen(PORT, "0.0.0.0", () => {
+    console.log(`Server aktif di port ${PORT}`);
 });
